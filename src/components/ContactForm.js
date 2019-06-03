@@ -68,8 +68,39 @@ const Textbox = styled.input`
 `;
 
 class ContactForm extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            mobile: false,
+            home: false,
+            email: false,
+            checked: false,
+        };
+        this.onChangeValue = this.onChangeValue.bind(this);
+        this.onRadioClick = this.onRadioClick.bind(this);
+
+        this.mobileRef = React.createRef();
+    }
+
+    anyIsEnabled = () => {
+        const myStateArr = Object.values(this.state).slice(0,3);
+        return myStateArr.filter(x=>x).length > 1;
+    }
+
+    onChangeValue = (event) => {
+        const { name, value } = event.target;
+
+        if (value.length > 0) {
+            this.setState({ [name] : true});
+        } else this.setState({ [name] : false, checked: false});
+    }
+
+    onRadioClick(e) {
+        console.log(e.target.value);
+    }
 
     render () {
+        console.log(this.state.checked);
         return (
             <FormsExternalWrapper>
                 <h1>Your profile</h1>
@@ -81,34 +112,57 @@ class ContactForm extends React.Component {
                         <TextboxInnerWrapper>
                             <TextboxLabelContainer>
                                 <TextboxLabel>Mobile</TextboxLabel>
-                                <Textbox type="number" pattern="[0-9]{4}-[0-9]{6}"/>
+                                <Textbox type="number" name="mobile" pattern="[0-9]{4}-[0-9]{6}" onChange={this.onChangeValue} />
                             </TextboxLabelContainer>
                             <TextboxLabelContainer>
                                 <TextboxLabel>Home number</TextboxLabel>
-                                <Textbox type="number" pattern="[0-9]{4}-[0-9]{6}"/>
+                                <Textbox type="number" name="home" pattern="[0-9]{4}-[0-9]{6}" onChange={this.onChangeValue}/>
                             </TextboxLabelContainer>
                             <TextboxLabelContainer>
                                 <TextboxLabel>Email</TextboxLabel>
-                                <Textbox type="email" pattern=".+@globex.com"/>
+                                <Textbox type="email" name="email" pattern=".+@globex.com" onChange={this.onChangeValue}/>
                             </TextboxLabelContainer>
                         </TextboxInnerWrapper>
                     </TextboxContainer>
                     <CheckboxContainer>
                         <div>
                             <TextboxLabel>Mobile</TextboxLabel>
-                            <input type="radio" name="contact" disabled="true"/>
+                            <input
+                                type="radio"
+                                name="contact"
+                                value="mobile"
+                                ref={this.mobileRef}
+                                onClick={this.onRadioClick}
+                            />
                         </div>
                         <div>
                             <TextboxLabel>Home</TextboxLabel>
-                            <input type="radio" name="contact" disabled="true"/>
+                            <input
+                                type="radio"
+                                name="contact"
+                                value="home"
+                                disabled={!this.state.home}
+                                onClick={this.onRadioClick}
+                            />
                         </div>
                         <div>
                             <TextboxLabel>Email</TextboxLabel>
-                            <input type="radio" name="contact" disabled="true"/>
+                            <input
+                                type="radio"
+                                name="contact"
+                                value="email"
+                                disabled={!this.state.email}
+                                onClick={this.onRadioClick}
+                            />
                         </div>
                         <div>
                             <TextboxLabel>Any</TextboxLabel>
-                            <input type="radio" name="contact" disabled="true"/>
+                            <input
+                                type="radio"
+                                name="contact"
+                                disabled={!this.anyIsEnabled()}
+                                onClick={this.onRadioClick}
+                            />
                         </div>
                     </CheckboxContainer>
                 </FormsContainer>
